@@ -1,0 +1,473 @@
+import java.sql.*;
+import java.util.*;
+
+	
+
+public class Main {
+	 
+	public static void main(String[] args)throws Exception{
+		getConnection();
+		Scanner sc = new Scanner(System.in);
+		int g;
+		int r=0;
+
+			
+			while (r==0) {
+		
+		
+				System.out.println("Select Option");
+				System.out.println("1. Admin Mode");
+				System.out.println("2. Update Mode");
+				System.out.println("3. Book Tickets");
+				System.out.println("0. Exit");
+				g=sc.nextInt();
+		if(g==1)
+		{
+			Admin();
+			
+		}
+		else if(g==2)
+		{		
+			update();
+		}
+		else if (g==3)
+		{
+			bookticket();
+		}
+		
+		else if (g==0)
+		{
+			break;
+		}
+		}
+	
+	}
+	public static Connection getConnection() throws Exception{
+		
+		String driver = "com.mysql.cj.jdbc.Driver";
+		String url="jdbc:mysql://localhost/";
+		String username ="root";
+		String password="admin";
+		Statement stmt = null;
+
+		try {
+			Class.forName(driver);
+		Connection cn = DriverManager.getConnection(url,username,password);
+		System.out.println("Connected");
+		
+		stmt =  cn.createStatement();
+		
+	     String sql = ("create database Railways");
+	     stmt.executeUpdate(sql);
+	     
+	     
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		try {
+			Class.forName(driver);
+			Connection cn = DriverManager.getConnection(url,username,password);
+			stmt =  cn.createStatement();
+			
+			String s = ("use railways");
+		     stmt.executeUpdate(s);
+		     System.out.println("Using Database Railways");
+		     
+		   }
+		   catch(Exception e) {
+			   System.out.println(e.getMessage());
+		   }
+	   
+	    	  try {
+	 	    String sql1 = "CREATE TABLE trains " +
+	                   "(tid INTEGER not NULL, " +
+	                   " tname VARCHAR(255), " + 
+	                   " departure VARCHAR(255), " + 
+	                   " arrival VARCHAR(255), " + 
+	                   " seats INTEGER, " + 
+	                   " PRIMARY KEY ( tid ))"; 
+	      stmt.executeUpdate(sql1);
+	      System.out.println("Created table trains");
+	    	  }
+	      catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+	      try {
+	      String sql2 = "CREATE TABLE passenger " +
+                  "(pid INTEGER not NULL, " +
+                  " pname VARCHAR(255), " + 
+                  " gender VARCHAR(255), " + 
+                  " address VARCHAR(255), " + 
+                  " phone VARCHAR(255), " + 
+                  " PRIMARY KEY ( pid ))"; 
+
+	      stmt.executeUpdate(sql2);
+	      stmt.executeUpdate("Created table Passenger");
+	      }
+	    	 
+	    	  catch(Exception e)
+	    	  {
+	    		  System.out.println(e.getMessage());
+	    	  }
+	    	  
+	      
+	      return null;
+	}
+	
+	      public static void Admin()throws Exception {
+	    	  String driver = "com.mysql.cj.jdbc.Driver";
+	  		String url="jdbc:mysql://localhost/";
+	  		String username ="root";
+	  		String password="admin";
+	  		Statement stmt = null;
+	  		Class.forName(driver);
+			Connection cn = DriverManager.getConnection(url,username,password);
+	  		stmt =  cn.createStatement();
+	    	  
+		   
+	  		
+	      
+	    	  Scanner sc = new Scanner(System.in);
+	    		int tid[]=new int[20];
+	    		int seats[]=new int[20];
+	    		String tname[]=new String[20];
+	    		String arrival[]=new String[20];
+	    		String departure[]=new String[20];
+	    		String id,pass;
+	    		int x;
+	    		
+	    		
+	    			try {
+	    			System.out.println("Enter administrator id ");
+		    		id=sc.next();
+		    		System.out.println("Enter password ");
+		    		pass=sc.next();
+		    		if(id.equals("admin")&&pass.equals("admin")) {
+		    			int c;
+		    			int f=0;
+		    			while(f==0)
+		    			{
+		    				System.out.println("Select Option");
+		    				System.out.println("1) Add Train");
+		    				System.out.println("2) Show Passenger Details");
+		    				System.out.println("0) Exit");
+		    				c=sc.nextInt();
+		    			
+		    			if(c==1) {
+		    			
+		    			String s = ("use railways;");
+	    			    stmt.executeUpdate(s);
+		    			System.out.println("Welcome");
+		    			System.out.println("How Many Trains you want to Insert");
+		    			x=sc.nextInt();
+		    			for (int i=1;i<=x;i++) {
+		    				System.out.println("Enter tid of train "+i);
+		    				tid[i]=sc.nextInt();
+		    				System.out.println("Enter name of train "+i);
+		    				tname[i]=sc.next();
+		    				System.out.println("Enter departure of train "+i);
+		    				departure[i]=sc.next();
+		    				System.out.println("Enter arrival of train "+i);
+		    				arrival[i]=sc.next();
+		    				System.out.println("Enter seats available in train "+i);
+		    				seats[i]=sc.nextInt();
+		    				
+
+							PreparedStatement s1=cn.prepareStatement("insert into trains values(?,?,?,?,?)");
+							
+		    				s1.setInt(1, tid[i]);
+
+		    				s1.setString(2, tname[i]);
+
+		    				s1.setString(3, departure[i]);
+
+		    				s1.setString(4, arrival[i]);
+
+		    				s1.setInt(5, seats[i]);
+		    				s1.executeUpdate();
+		    				System.out.println("Values inserted to database admin");
+		    			}
+		    			}
+		    			else if(c==2) {
+		    				String s = ("use railways;");
+		    			    stmt.executeUpdate(s);
+		    				String query = ("Select * from passenger");
+   						 ResultSet rs =stmt.executeQuery(query);
+   						while(rs.next()) {
+   						System.out.println("Passenger id : "+rs.getInt(1));
+   						System.out.println("Passenger Name : "+rs.getString(2));
+   						System.out.println("Passenger Gender : "+rs.getString(3));
+   						System.out.println("Passenger Address : "+rs.getString(4));
+   						System.out.println("Phone no : "+rs.getString(5));
+		    			}
+		    			}
+		    			else if(c==0) {
+		    				break;
+		    			}
+		    			else {
+		    				System.out.println("Select Appropriate Option");
+		    			}
+		    			}
+		    				
+		    			}
+		    		
+	    		
+		    		else {
+		    			System.out.println("You Can't Access");
+		    		}
+	    		 }
+	    			catch(Exception e) {
+	    				System.out.println(e);
+	    			}
+	      }
+	    			
+	    	public static void bookticket() throws Exception {
+	    				 int r;
+	    				 int z=0;
+	    				 String driver = "com.mysql.cj.jdbc.Driver";
+	    			  		String url="jdbc:mysql://localhost/";
+	    			  		String username ="root";
+	    			  		String password="admin";
+	    			  		Statement stmt ;
+	    			  		
+	    			  		 int pid[]=new int[20];
+	 	    		    		String phone[]=new String[20];
+	 	    		    		String pname[]=new String[20];
+	 	    		    		String address[]=new String[20];
+	 	    		    		String gender[]=new String[20];
+	 	    		    		int x;
+	    			  		
+	    			  		Class.forName(driver);
+	    				 Scanner sc = new Scanner(System.in);
+	    				 Connection cn = DriverManager.getConnection(url,username,password);
+		    		  		stmt =  cn.createStatement();
+		    		  		String s = ("use railways;");
+  	    			    	stmt.executeUpdate(s);
+	    				
+	    				 while (z==0) {
+	    					 System.out.println("1) Show Trains");
+		    				 System.out.println("2) Book Ticket");
+		    				 System.out.println("0) Exit");
+		    				 r=sc.nextInt();
+		    				 try {
+	    					 if(r==1) {
+	    						 
+	    						 String query = ("Select * from trains");
+	    						 ResultSet rs =stmt.executeQuery(query);
+	    						while(rs.next()) {
+	    						System.out.println("Train No : "+rs.getInt(1));
+	    						System.out.println("Train Name : "+rs.getString(2));
+	    						System.out.println("Train from : "+rs.getString(3));
+	    						System.out.println("Train to : "+rs.getString(4));
+	    						System.out.println("Available Seats : "+rs.getInt(5));
+	    						}
+	    						
+	    						
+	    						
+	    						 
+		    				 }
+		    				 
+	    					 else if (r==2)
+	    					 {
+	    						 int m,t;
+	    						 System.out.println("Enter Train No");
+	    						 t=sc.nextInt();
+	    						 System.out.println("How many Tickets you want to buy?");
+	    						 m=sc.nextInt();
+	    						 System.out.println("Wait.....");
+	    						
+	 	    		    	
+
+	 						PreparedStatement s1=cn.prepareStatement("insert into passenger values(?,?,?,?,?)");
+	 	    		  	  	   
+	 	    		    	  try {
+
+	 	    		    		  for (int i=1;i<=m;i++) {
+	 	    		    			  
+	 	    		    			  System.out.println("Enter id of passenger "+i);
+	 	    		    				pid[i]=sc.nextInt();
+	 	    		    				System.out.println("Enter name of passenger "+i);
+	 	    		    				pname[i]=sc.next();
+	 	    		    				System.out.println("Enter gender of passenger "+i);
+	 	    		    				gender[i]=sc.next();
+	 	    		    				System.out.println("Enter address of passenger "+i);
+	 	    		    				address[i]=sc.next();
+	 	    		    				System.out.println("Enter phone no . of passenger "+i);
+	 	    		    				phone[i]=sc.next();
+	 	    		    				
+	 	    		    			    
+
+	 	    		    				s1.setInt(1, pid[i]);
+
+	 	    		    				s1.setString(2, pname[i]);
+
+	 	    		    				s1.setString(3, gender[i]);
+
+	 	
+	 	    		    				s1.setString(4, address[i]);
+
+	 	    		    				s1.setString(5, phone[i]);
+	 	    		    				s1.executeUpdate();
+	 	    		    				System.out.println("Values inserted");
+	 	    		    		  }
+	 	    		    	  }
+	 	    		    	  catch(Exception e) {
+	 	    		    		  System.out.println(e.getMessage());
+	 	    		    	  }
+	    						 String query = ("update trains set seats =seats-"+m+" where tid ="+t);
+	    						 stmt.executeUpdate(query);
+	    						 System.out.println("Have a Safe Journey");
+	    						 
+	    					 }
+	    					 else if (r==0)
+	    					 {
+	    						 break;
+	    					 }
+	    					 else {
+	    						 System.out.println("Invalid");
+	    					 }
+		    				 }
+	    					 catch(Exception e) {
+		    					 System.out.println(e.getMessage());
+		    					 
+		    				 }
+	    				 }
+					 
+	    			 }
+	     public static void update() throws Exception{
+	    	 int y;
+	    	 int z=0;
+	    	try {
+	    	 String driver = "com.mysql.cj.jdbc.Driver";
+		  		String url="jdbc:mysql://localhost/";
+		  		String username ="root";
+		  		String password="admin";
+		  		Statement stmt ;
+		  		Class.forName(driver);
+				 Scanner sc = new Scanner(System.in);
+				 Connection cn = DriverManager.getConnection(url,username,password);
+   		  		stmt =  cn.createStatement();
+   		  		String s = ("use railways;");
+ 			    	stmt.executeUpdate(s);
+	    	
+	    	
+	    	
+	    	 while(z==0)
+	    	 {
+	    		 System.out.println("Select Option");
+	    		 System.out.println("1) Modify");
+		    	 System.out.println("2) Cancel Ticket");
+		    	 System.out.println("0) Exit");
+		    	 y=sc.nextInt();
+		    	 if(y==1) {
+		    		 int e=0;
+		    		 int w;
+		    		 while (e==0)
+		    		 {
+		    			 System.out.println("Criteria to Modify");
+		    			 System.out.println("1) Name");
+		    			 System.out.println("2) Gender");
+		    			 System.out.println("3) Phone");
+		    			 System.out.println("4) Address");
+		    			 System.out.println("0) Exit");
+		    			 w=sc.nextInt();
+		    			 if(w==1) {
+		    				 String n;
+		    				 int p;
+		    				 System.out.println("Enter valid name");
+		    				 n=sc.next();
+		    				 System.out.println("Enter Passenger id");
+		    				 p=sc.nextInt();
+		    				 String query = "Update Passenger set pname="+n+"where pid="+p+";";
+		    				 stmt.executeUpdate(query);
+		    				 System.out.println("Name Updated successfully");
+		    			 }
+		    			 else if(w==0) {
+		    				 break;
+		    			 }
+		    			 else if(w==2) {
+		    				 String n;
+		    				 int p;
+		    				 System.out.println("Enter Gender");
+		    				 n=sc.next();
+		    				 System.out.println("Enter Passenger id");
+		    				 p=sc.nextInt();
+		    				 String query = "Update Passenger set gender="+n+"where pid="+p+";";
+		    				 stmt.executeUpdate(query);
+		    				 System.out.println("Gender Updated successfully");
+		    			 }
+		    			 else if(w==3) {
+		    				 String n;
+		    				 int p;
+		    				 System.out.println("Enter valid phone no.");
+		    				 n=sc.next();
+		    				 System.out.println("Enter Passenger id");
+		    				 p=sc.nextInt();
+		    				 String query = "Update Passenger set pname="+n+"where pid="+p+";";
+		    				 stmt.executeUpdate(query);
+		    				 System.out.println("Phone no Updated successfully");
+		    			 }
+		    			 else if(w==4) {
+		    				 String n;
+		    				 int p;
+		    				 System.out.println("Enter valid Address");
+		    				 n=sc.next();
+		    				 System.out.println("Enter Passenger id");
+		    				 p=sc.nextInt();
+		    				 String query = "Update Passenger set pname="+n+"where pid="+p+";";
+		    				 stmt.executeUpdate(query);
+		    				 System.out.println("Address Updated successfully");
+		    			 }
+		    			 else {
+		    				 System.out.println("Please Select a Proper Option");
+		    			 }
+		    			 
+		    		 }
+		    		 
+		    	 }
+		    	 else if(y==2)
+		    	 {
+		    		 int p;
+		    		 int t;
+		    		 
+		    		 System.out.println("Enter Passenger id");
+		    		 p=sc.nextInt();
+		    		 String query="delete from passenger where id="+p;
+		    		 stmt.executeUpdate(query);
+		    		 System.out.println("Enter Train id");
+		    		 t=sc.nextInt();
+		    		 String query1 ="update trains set seats=seats+1 where tid="+t+";";
+		    		 stmt.executeUpdate(query1);
+		    	 }
+		    	 else if(y==0) {
+		    		 break;
+		    	 }
+		    	 else {
+		    		 System.out.println("Select Proper Option");
+		    	 }
+		     }
+	    	}
+	    	catch(Exception e) {
+	    		System.out.println(e.getMessage());
+	    	}
+	    	 
+	     }
+	    }
+
+
+
+		
+		
+
+
+		
+		
+
+	
+
+
+
+
+
+
